@@ -30,7 +30,7 @@ const main = async () => {
     var zip = mnd["Document Portal URL"] + "/AttachmentZip";
     const response = await fetch(zip);
     const body = Readable.fromWeb(response.body);
-    var zipfile = id + ".zip";
+    var zipfile = outdir + "/" + id + ".zip";
     await writeFile(zipfile, body);
     await extract(zipfile, {
       dir: outdir + "/" + id,

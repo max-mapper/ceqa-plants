@@ -3,7 +3,7 @@
 FROM node:22-slim
 
 RUN apt update -y
-RUN apt install poppler-utils grep findutils -y
+RUN apt install poppler-utils grep findutils git-all tree -y
 
 # Execute next commands in the directory /workspace
 WORKDIR /workspace
@@ -18,8 +18,6 @@ RUN npm ci --only=production
 
 # Copy local code to the container image.
 COPY . .
-COPY rare.txt .
-COPY run.sh .
 
 # Run the web service on container startup.
 ENTRYPOINT [ "./run.sh" ]
