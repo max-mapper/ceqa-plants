@@ -35,17 +35,25 @@ const main = async () => {
 
   var matches = mnds.concat(nops);
 
+  async function tryGetPDFs(match, delay = 5000, retries = 3) {
+    const operation = async () => {
+      var id = match["SCH Number"];
+      var zip = match["Document Portal URL"] + "/AttachmentZip";
+      console.log(zip);
+      const response = await fetch(zip);
+      const body = Readable.fromWeb(response.body);
+      var zipfile = outdir + "/" + id + ".zip";
+      await writeFile(zipfile, body);
+      await extract(zipfile, {
+        dir: outdir + "/" + id,
+      });
+    };
+    const wrapped = retryOperation(operation, delay, retries);
+    return await wrapped;
+  }
+
   for (const match of matches) {
-    var id = match["SCH Number"];
-    var zip = match["Document Portal URL"] + "/AttachmentZip";
-    const response = await fetch(zip);
-    const body = Readable.fromWeb(response.body);
-    var zipfile = outdir + "/" + id + ".zip";
-    await writeFile(zipfile, body);
-    await extract(zipfile, {
-      dir: outdir + "/" + id,
-    });
-    await sleep(100);
+    await tryGetPDFs(match);
   }
 };
 
@@ -53,6 +61,14 @@ const main = async () => {
 const sleep = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
+
+// Credits to @Bergi
+const retryOperation = (operation, delay, retries) =>
+  operation().catch((reason) =>
+    retries > 0
+      ? wait(delay).then(() => retryOperation(operation, delay, retries - 1))
+      : Promise.reject(reason)
+  );
 
 // Start script
 main().catch((err) => {
