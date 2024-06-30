@@ -1,6 +1,5 @@
 #!/bin/bash
 set -o xtrace
-git config credential.helper '!f() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; f'
 git clone https://github.com/max-mapper/ceqa-plants/
 node index.js
 todaydir="ceqa-plants/docs/output/$(date +%Y)/$(date +%m)/$(date +%d)"
@@ -10,6 +9,9 @@ find zips -iname '*.pdf' -exec sh -c 'pdftotext "{}" - | grep --color --with-fil
 node html.js "$todaydir/matches.txt" > "$todaydir/index.html"
 tree docs/output -T "CEQA Rare Plant Species Mentions" -H https://max-mapper.github.io/ceqa-plants/output -o docs/index.html
 cd ceqa-plants
+git config credential.helper '!f() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; f'
+git config --global user.email "maxosmail@gmail.com"
+git config --global user.name "Max"
 git add .
 git commit -m "add daily matches"
 git push origin master
