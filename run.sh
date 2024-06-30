@@ -2,6 +2,7 @@
 set -o xtrace
 git clone https://github.com/max-mapper/ceqa-plants/
 node index.js
+export TZ="America/Los_Angeles"
 todaydir="ceqa-plants/docs/output/$(date +%Y)/$(date +%m)/$(date +%d)"
 mkdir -p $todaydir
 find zips -iname '*.pdf' -exec sh -c 'pdftotext "{}" - | grep --color --with-filename --label="{}" -f rare.txt' \; > "$todaydir/matches.txt"
