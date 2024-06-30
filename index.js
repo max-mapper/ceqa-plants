@@ -14,26 +14,25 @@ const main = async () => {
     .toLocaleString("sv", { timeZoneName: "short" })
     .split(" ")[0];
 
-  const response = await fetch(
-    `https://ceqanet.opr.ca.gov/Search?StartRange=${yesterday}&EndRange=${yesterday}&DocumentType=MND%20-%20Mitigated%20Negative%20Declaration&OutputFormat=CSV`
-  );
+  var mndUrl = `https://ceqanet.opr.ca.gov/Search?StartRange=${yesterday}&EndRange=${yesterday}&DocumentType=MND%20-%20Mitigated%20Negative%20Declaration&OutputFormat=CSV`;
+  var nopUrl = `https://ceqanet.opr.ca.gov/Search?StartRange=${yesterday}&EndRange=${yesterday}&DocumentType=NOP%20-%20Notice%20of%20Preparation%20of%20a%20Draft%20EIR&OutputFormat=CSV`;
 
-  const response2 = await fetch(
-    `https://ceqanet.opr.ca.gov/Search?StartRange=${yesterday}&EndRange=${yesterday}&DocumentType=NOP%20-%20Notice%20of%20Preparation%20of%20a%20Draft%20EIR&OutputFormat=CSV`
-  );
+  const response = await fetch(mndUrl);
+  const response2 = await fetch(nopUrl);
 
   // Convert the response into text
   const body = await response.text();
   const mnds = await neatCsv(body);
+  console.log(mndUrl, mnds.length);
 
   const body2 = await response2.text();
   const nops = await neatCsv(body2);
+  console.log(nopUrl, nops.length);
 
   var outdir = path.resolve(process.cwd() + "/zips");
   await mkdirp(outdir);
 
   var matches = mnds.concat(nops);
-  console.log(matches);
 
   for (const match of matches) {
     var id = match["SCH Number"];
