@@ -2,6 +2,7 @@ import fs from "fs/promises";
 
 const main = async () => {
   var txt = await fs.readFile(process.argv[2]);
+  console.log("<h3>Today's rare plant mentions in CEQA documents</h3>");
   var sections = txt
     .toString()
     .split("\n")
@@ -11,7 +12,7 @@ const main = async () => {
       var match = parts[1];
       var id = file.split("/")[1];
       var pdf = file.split("zips/" + id + "/")[1];
-      console.log(`<h3>Today's rare plant mentions in CEQA documents</h3>
+      console.log(`<a href="https://ceqanet.opr.ca.gov/${id}">SCH #${id}<h4>
       <ul>
        <LI><a href="https://ceqanet.opr.ca.gov/${id}">${pdf} - <b>${match}</b></a></LI>
        </ul>`);

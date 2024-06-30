@@ -1,4 +1,3 @@
-// import * as cheerio from "cheerio";
 import neatCsv from "neat-csv";
 import extract from "extract-zip";
 import * as path from "path";
@@ -12,22 +11,33 @@ const { CLOUD_RUN_TASK_INDEX = 0, CLOUD_RUN_TASK_ATTEMPT = 0 } = process.env;
 // Define main script
 const main = async () => {
   const yesterday = new Date(new Date().setDate(new Date().getDate() - 1))
-    .toISOString()
-    .split("T")[0];
+    .toLocaleString("sv", { timeZoneName: "short" })
+    .split(" ")[0];
 
   const response = await fetch(
     `https://ceqanet.opr.ca.gov/Search?StartRange=${yesterday}&EndRange=${yesterday}&DocumentType=MND%20-%20Mitigated%20Negative%20Declaration&OutputFormat=CSV`
   );
 
+  const response2 = await fetch(
+    `https://ceqanet.opr.ca.gov/Search?StartRange=${yesterday}&EndRange=${yesterday}&DocumentType=NOP%20-%20Notice%20of%20Preparation%20of%20a%20Draft%20EIR&OutputFormat=CSV`
+  );
+
   // Convert the response into text
   const body = await response.text();
   const mnds = await neatCsv(body);
+
+  const body2 = await response2.text();
+  const nops = await neatCsv(body2);
+
   var outdir = path.resolve(process.cwd() + "/zips");
   await mkdirp(outdir);
 
-  for (const mnd of mnds) {
-    var id = mnd["SCH Number"];
-    var zip = mnd["Document Portal URL"] + "/AttachmentZip";
+  var matches = mnds.concat(nops);
+  console.log(matches);
+
+  for (const match of matches) {
+    var id = match["SCH Number"];
+    var zip = match["Document Portal URL"] + "/AttachmentZip";
     const response = await fetch(zip);
     const body = Readable.fromWeb(response.body);
     var zipfile = outdir + "/" + id + ".zip";
@@ -35,13 +45,8 @@ const main = async () => {
     await extract(zipfile, {
       dir: outdir + "/" + id,
     });
+    await sleep(100);
   }
-
-  // Load the document using any of the methods described in the "Loading Documents" section.
-  // const $ = cheerio.load(body);
-
-  // Selecting Each col-12 class name and iterate through the list
-  // $(".listing-items--wrapper > .row > .col-12").map((i, el) => {});
 };
 
 // Wait for a specific amount of time
