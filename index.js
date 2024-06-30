@@ -1,7 +1,8 @@
 import neatCsv from "neat-csv";
 import extract from "extract-zip";
-import * as path from "path";
 import { mkdirp } from "mkdirp";
+import moment from "moment";
+import * as path from "path";
 import { writeFile } from "node:fs/promises";
 import { Readable } from "node:stream";
 
@@ -11,7 +12,7 @@ const { CLOUD_RUN_TASK_INDEX = 0, CLOUD_RUN_TASK_ATTEMPT = 0 } = process.env;
 // Define main script
 const main = async () => {
   const yesterday = new Date(new Date().setDate(new Date().getDate() - 1))
-    .toLocaleString("sv", { timeZoneName: "short" })
+    .toLocaleString("sv-SE", { timeZone: "America/Los_Angeles" })
     .split(" ")[0];
 
   var mndUrl = `https://ceqanet.opr.ca.gov/Search?StartRange=${yesterday}&EndRange=${yesterday}&DocumentType=MND%20-%20Mitigated%20Negative%20Declaration&OutputFormat=CSV`;

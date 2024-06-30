@@ -2,6 +2,8 @@
 # a base image
 FROM node:22-slim
 
+ENV TZ="America/Los_Angeles"
+
 RUN apt update -y
 RUN apt install poppler-utils grep findutils git-all tree -y
 
