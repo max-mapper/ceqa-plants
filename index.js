@@ -34,6 +34,7 @@ const main = async () => {
   await mkdirp(outdir);
 
   var matches = mnds.concat(nops);
+  if (!matches.length) return;
 
   async function tryGetPDFs(match, delay = 5000, retries = 3) {
     const operation = async () => {
