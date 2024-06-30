@@ -66,7 +66,7 @@ const sleep = (ms) => {
 const retryOperation = (operation, delay, retries) =>
   operation().catch((reason) =>
     retries > 0
-      ? wait(delay).then(() => retryOperation(operation, delay, retries - 1))
+      ? sleep(delay).then(() => retryOperation(operation, delay, retries - 1))
       : Promise.reject(reason)
   );
 
