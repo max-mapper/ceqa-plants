@@ -13,7 +13,7 @@ const main = async () => {
       var file = parts[0];
       var match = parts[1];
       var id = file.split("/")[1];
-      var pdf = file.split("zips/" + id + "/")[1];
+      var pdf = file.split("zips/" + id + "/")[1].split("/")[1];
       if (!ids[id]) ids[id] = {};
       if (!ids[id][pdf]) ids[id][pdf] = [];
       ids[id][pdf].push(`
@@ -29,9 +29,11 @@ const main = async () => {
       );
       console.log("<ul><li>Mentions of rare plants in this PDF:</li>");
       console.log(ids[id][pdf].join("\n"));
-      console.log("</ul></ul></ul>");
+      console.log("</ul></ul>");
     }
+    console.log("</ul>");
   }
+  console.log("</ul>");
 };
 
 main().catch((err) => {
