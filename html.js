@@ -12,9 +12,9 @@ const main = async () => {
       var match = parts[1];
       var id = file.split("/")[1];
       var pdf = file.split("zips/" + id + "/")[1];
-      console.log(`<a href="https://ceqanet.opr.ca.gov/${id}">SCH #${id}<h4>
+      console.log(`<a href="https://ceqanet.opr.ca.gov/${id}">SCH #${id}</a>
       <ul>
-       <LI><a href="https://ceqanet.opr.ca.gov/${id}">${pdf} - <b>${match}</b></a></LI>
+       <li><a href="https://ceqanet.opr.ca.gov/${id}">${pdf} - <b>${match}</b></a></li>
        </ul>`);
     });
 };
