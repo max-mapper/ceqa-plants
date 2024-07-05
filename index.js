@@ -1,7 +1,9 @@
 import neatCsv from "neat-csv";
+import { parse } from "csv/sync";
 import extract from "extract-zip";
 import { mkdirp } from "mkdirp";
 import moment from "moment";
+import fs from "fs/promises";
 import * as path from "path";
 import { writeFile } from "node:fs/promises";
 import { Readable } from "node:stream";
@@ -23,11 +25,18 @@ const main = async () => {
 
   // Convert the response into text
   const body = await response.text();
-  const mnds = await neatCsv(body);
+  const mnds = parse(body, {
+    relax_quotes: true,
+    columns: true,
+  });
   console.log(mndUrl, mnds.length);
 
   const body2 = await response2.text();
-  const nops = await neatCsv(body2);
+  const nops = parse(body2, {
+    relax_quotes: true,
+    columns: true,
+  });
+
   console.log(nopUrl, nops.length);
 
   var outdir = path.resolve(process.cwd() + "/zips");
@@ -48,6 +57,10 @@ const main = async () => {
       await extract(zipfile, {
         dir: outdir + "/" + id,
       });
+      await fs.writeFile(
+        outdir + "/" + id + ".json",
+        JSON.stringify(match, null, "  ")
+      );
     };
     const wrapped = retryOperation(operation, delay, retries);
     return await wrapped;

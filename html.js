@@ -1,4 +1,7 @@
 import fs from "fs/promises";
+import * as path from "path";
+
+var outdir = path.resolve(process.cwd() + "/zips");
 
 const main = async () => {
   var txt = await fs.readFile(process.argv[2]);
@@ -20,8 +23,9 @@ const main = async () => {
        <li><i>...${match}...</i></li>`);
     });
   for (var id in ids) {
+    var meta = JSON.parse(await fs.readFile(outdir + "/" + id + ".json"));
     console.log(
-      `<ul><li><a href="https://ceqanet.opr.ca.gov/${id}">SCH #${id}</a></li>`
+      `<ul><li><a href="https://ceqanet.opr.ca.gov/${id}">SCH #${id} (${meta.Cities}, ${meta.Counties} County)</a></li>`
     );
     for (var pdf in ids[id]) {
       console.log(
