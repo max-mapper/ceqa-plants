@@ -1,4 +1,3 @@
-import neatCsv from "neat-csv";
 import { parse } from "csv/sync";
 import extract from "extract-zip";
 import { mkdirp } from "mkdirp";
